@@ -45,12 +45,6 @@ interface IFOTPreSale {
         address token
     );
 
-    /**
-     * @dev Emitted when FOT is purchased with fiat
-     * @param recipient Address of token recipient
-     * @param tokenAmount Amount of tokens purchased
-     */
-    event PurchasedByFiat(address recipient, uint256 tokenAmount);
 
     /**
      * @dev Emitted when FOT is purchased with coin
@@ -187,16 +181,6 @@ interface IFOTPreSale {
         bytes16 _token,
         uint80 _roundID
     ) external;
-
-    /**
-     * @dev Purchases FOT with fiat
-     * @param _fotAmount Amount of FOT to purchase
-     * @param _beneficiary Address to receive FOT
-     */
-    function buyTokenByFiat(
-        uint256 _fotAmount,
-        address _beneficiary
-    ) external payable;
 
     /**
      * @dev Purchases FOT with coin

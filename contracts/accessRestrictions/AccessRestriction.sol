@@ -13,11 +13,7 @@ contract AccessRestriction is AccessControl, Pausable, IAccessRestriction {
     bytes32 public constant DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant SCRIPT_ROLE = keccak256("SCRIPT_ROLE");
-    bytes32 public constant WERT_ROLE = keccak256("WERT_ROLE");
-    bytes32 public constant VESTING_MANAGER_ROLE =
-        keccak256("VESTING_MANAGER_ROLE");
-    bytes32 public constant APPROVED_CONTRACT_ROLE =
-        keccak256("APPROVED_CONTRACT_ROLE");
+    bytes32 public constant APPROVED_CONTRACT_ROLE = keccak256("APPROVED_CONTRACT_ROLE");
 
     /** MODIFIER
      * @dev Checks if message sender has admin role
@@ -113,17 +109,6 @@ contract AccessRestriction is AccessControl, Pausable, IAccessRestriction {
     }
 
     /**
-     * @dev Checks if given address has vesting manager role
-     * @param _address Address to check
-     */
-    function ifVestingManager(address _address) external view override {
-        require(
-            hasRole(VESTING_MANAGER_ROLE, _address),
-            "AR::caller is not vesting manager"
-        );
-    }
-
-    /**
      * @dev Checks if given address is approved contract
      * @param _address Address to check
      */
@@ -132,14 +117,6 @@ contract AccessRestriction is AccessControl, Pausable, IAccessRestriction {
             hasRole(APPROVED_CONTRACT_ROLE, _address),
             "AR::caller is not approved contract"
         );
-    }
-
-    /**
-     * @dev Checks if given address has WERT role
-     * @param _address Address to check
-     */
-    function ifWert(address _address) external view override {
-        require(hasRole(WERT_ROLE, _address), "AR::caller is not wert");
     }
 
     /**
@@ -207,17 +184,6 @@ contract AccessRestriction is AccessControl, Pausable, IAccessRestriction {
     }
 
     /**
-     * @dev Checks if given address has vesting manager role
-     * @param _address Address to check
-     * @return bool true if address has vesting manager role
-     */
-    function isVestingManager(
-        address _address
-    ) public view override returns (bool) {
-        return hasRole(VESTING_MANAGER_ROLE, _address);
-    }
-
-    /**
      * @dev Checks if given address has approved contract role
      * @param _address Address to check
      * @return bool true if address has approved contract role
@@ -235,14 +201,5 @@ contract AccessRestriction is AccessControl, Pausable, IAccessRestriction {
      */
     function isScript(address _address) public view override returns (bool) {
         return hasRole(SCRIPT_ROLE, _address);
-    }
-
-    /**
-     * @dev Checks if given address has WERT role
-     * @param _address Address to check
-     * @return bool true if address has WERT role
-     */
-    function isWert(address _address) public view override returns (bool) {
-        return hasRole(WERT_ROLE, _address);
     }
 }

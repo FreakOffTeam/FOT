@@ -23,16 +23,18 @@ interface IFOTDistributor {
      * @param _to Recipient address
      * @param _amount Amount of tokens swapped
      */
-    event TokenSwapped(address indexed _to, uint256 indexed _amount);
+    event TokenSwapped(
+        bytes32 indexed poolName,
+        address indexed _to,
+        uint256 indexed _amount
+    );
 
     /**
      * @dev Emitted when liquidity is transferred between pools
-     * @param _fromPoolName Source pool name
      * @param _destPoolName Destination pool name
      * @param _amount Amount of liquidity transferred
      */
     event TransferredLiquidity(
-        bytes32 indexed _fromPoolName,
         bytes32 indexed _destPoolName,
         uint256 indexed _amount
     );
@@ -51,17 +53,22 @@ interface IFOTDistributor {
     ) external returns (bool);
 
     /**
-     * @dev Swap LMNT to FOT tokens from the "Game" pool
+     * @dev Swap FOT tokens from the "GameTreasury" or "P2E" pool
      * @param _to Recipient address
      * @param _amount Amount of tokens to swap
      */
-    function swap(address _to, uint256 _amount) external returns (bool);
+    function swap(
+        bytes32 _poolName,
+        address _to,
+        uint256 _amount
+    ) external returns (bool);
 
     /**
-     * @dev Transfer remaining liquidity from a pool to the "Game" pool
-     * @param poolName Source pool name
+     * @dev Transfer liquidity from 'Reserved' to 'toPool'"
+     * @param toPool Target pool name
+     * @param amount Transfer amount
      */
-    function transferLiquidity(bytes32 poolName) external;
+    function transferLiquidity(bytes32 toPool, uint256 amount) external;
 
     /**
      * @dev Get available liquidity for a pool

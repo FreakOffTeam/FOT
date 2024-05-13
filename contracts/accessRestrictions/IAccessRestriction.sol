@@ -88,37 +88,12 @@ interface IAccessRestriction is IAccessControl {
     function ifDistributor(address _address) external view;
 
     /**
-     * @dev Checks if given address has vesting manager role
-     * @param _address Address to check
-     */
-    function ifVestingManager(address _address) external view;
-
-    /**
-     * @dev Checks if given address has WERT role
-     * @param _address Address to check
-     * @return bool true if address has WERT role
-     */
-    function isWert(address _address) external view returns (bool);
-
-    /**
-     * @dev Checks if given address has vesting manager role
-     * @param _address Address to check
-     * @return bool true if address has vesting manager role
-     */
-    function isVestingManager(address _address) external view returns (bool);
-
-    /**
      * @dev Checks if given address has distributor role
      * @param _address Address to check
      * @return bool true if address has distributor role
      */
     function isDistributor(address _address) external view returns (bool);
 
-    /**
-     * @dev Checks if given address has WERT role
-     * @param _address Address to check
-     */
-    function ifWert(address _address) external view;
 
     /**
      * @dev Checks if given address is admin or has script role

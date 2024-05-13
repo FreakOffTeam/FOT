@@ -62,6 +62,11 @@ contract FOTDistributor is IFOTDistributor {
         _;
     }
 
+    modifier onlygGameOrP2E(bytes32 pool) {
+        require(pool == bytes32("GameTreasury") || pool == bytes32("P2E"), "FOTDistributor::The pool is not game or p2e");
+        _;
+    }
+
     /**
      * @dev Constructor to initialize the FOTDistributor contract
      * @param _accessRestrictionAddress Address of the access restriction contract
@@ -72,10 +77,10 @@ contract FOTDistributor is IFOTDistributor {
         token = IFOT(_fotAddress);
 
         // Initialize pool liquidity values
-        poolLiquidity[bytes32("P2E")] = 37e8 * (10 ** 18);
-        poolLiquidity[bytes32("GameTreasury")] = 1e9 * (10 ** 18);
-        poolLiquidity[bytes32("Sale")] = 12e8 * (10 ** 18);
-        poolLiquidity[bytes32("Liquidity")] = 11e8 * (10 ** 18);
+        poolLiquidity[bytes32("P2E")] = 39e8 * (10 ** 18);
+        poolLiquidity[bytes32("GameTreasury")] = 11e8 * (10 ** 18);
+        poolLiquidity[bytes32("Sale")] = 13e8 * (10 ** 18);
+        poolLiquidity[bytes32("Liquidity")] = 7e8 * (10 ** 18);
         poolLiquidity[bytes32("Team")] = 1e9 * (10 ** 18);
         poolLiquidity[bytes32("Marketing")] = 12e8 * (10 ** 18);
         poolLiquidity[bytes32("Reserved")] = 5e8 * (10 ** 18);
@@ -102,33 +107,37 @@ contract FOTDistributor is IFOTDistributor {
     }
 
     /**
-     * @dev Swap FOT tokens from the "Game" pool
+     * @dev Swap FOT tokens from the "GameTreasury" or "P2E" pool
      * @param _to Recipient address
      * @param _amount Amount of tokens to swap
      */
     function swap(
+        bytes32 _poolName,
         address _to,
         uint256 _amount
-    ) external override onlyScript validAddress(_to) returns (bool) {
-        _distribute(bytes32("Game"), _amount, _to);
+    ) external override onlyScript onlygGameOrP2E(_poolName) validAddress(_to) returns (bool) {
+        // require(_poolName == bytes32("GameTreasury") || _poolName == bytes32("P2E"), "FOTDistributor::The pool is not valid for swap");
+        _distribute(bytes32(_poolName), _amount, _to);
 
-        emit TokenSwapped(_to, _amount);
-
+        emit TokenSwapped(_poolName, _to, _amount);
         return true;
     }
 
     /**
-     * @dev Transfer remaining liquidity from a pool to "Game"
-     * @param poolName Source pool name
+     * @dev Transfer liquidity from 'Reserved' to 'toPool'"
+     * @param toPool Target pool name
+     * @param amount Transfer amount
      */
-    function transferLiquidity(bytes32 poolName) external override onlyAdmin {
-        uint256 remainingToken = poolLiquidity[poolName] -
-            usedLiquidity[poolName];
+    function transferLiquidity(bytes32 toPool, uint256 amount) external override onlyAdmin onlygGameOrP2E(toPool){
+        uint256 remainingToken = poolLiquidity[bytes32("Reserved")] -
+            usedLiquidity[bytes32("Reserved")];
 
-        poolLiquidity[poolName] -= remainingToken;
-        poolLiquidity[bytes32("Game")] += remainingToken;
+        require(remainingToken >= 0 && remainingToken >= amount, "FOTDistributor::The pool has not enough balance");
 
-        emit TransferredLiquidity(poolName, bytes32("Game"), remainingToken);
+        poolLiquidity[bytes32("Reserved")] -= amount;
+        poolLiquidity[toPool] += amount;
+
+        emit TransferredLiquidity(toPool, amount);
     }
 
     /**

@@ -13,8 +13,6 @@ interface IFOTVesting {
         uint256 totalAmount; // Total amount vested for the beneficiary.
         uint256 claimedAmount; // Amount already claimed by the beneficiary.
         uint64 startDate; // Timestamp when vesting starts.
-        uint64 unlockDate; // Timestamp when the first portion of the vesting unlocks.
-        uint64 endDate; // Total amount vested for the beneficiary.
         address beneficiary; // Address of the beneficiary receiving the vested tokens.
     }
 
@@ -101,19 +99,22 @@ interface IFOTVesting {
      * @param planId Plan ID
      * @param beneficiary Beneficiary
      * @param start Start timestamp
-     * @param unlockDate Unlock timestamp
-     * @param endDate End timestamp
      * @param totalAmount Total vesting amount
      */
     event VestingCreated(
         uint256 planId,
         address indexed beneficiary,
         uint64 start,
-        uint64 unlockDate,
-        uint64 endDate,
         uint256 totalAmount
     );
 
+    /**
+     * Emitted when tge seted
+     * @param planId Plan Id
+     * @param tgeDate TGE Date
+     */
+    event VestingTGESeted(uint256 planId, uint256 tgeDate);
+    
     // External functions
 
     /**
@@ -133,6 +134,13 @@ interface IFOTVesting {
         uint16 _initialReleasePercentage,
         bytes32 poolName
     ) external;
+
+    /**
+     * @dev Add tge time to vesting plan
+     * @param _planID plan id
+     * @param tgeTime tge time
+     */
+    function setVestingPlanTGE(uint256 _planID, uint256 tgeTime) external;
 
     /**
      * @dev Creates new vesting schedule
@@ -175,10 +183,10 @@ interface IFOTVesting {
      */
     function totalVestingAmount() external view returns (uint256);
 
-    /*
+    /**
      * @dev Gets vesting plan details
      * @param planId Plan ID
-     * @return Vesting plan details
+     * return Vesting plan details
      */
     function vestingPlans(
         uint256 planId
@@ -193,7 +201,12 @@ interface IFOTVesting {
             uint16 initialReleasePercentage,
             bytes32 poolName
         );
-
+    /**
+     * @dev Gets vesting TGES
+     * @param planId Plan ID
+     * @return tge Vesting plan tge timestamp
+     */
+    function vestingTGEs(uint256 planId) external view returns (uint256 tge);
     /*
      * @dev Gets user vesting details
      * @param _beneficiary Beneficiary address
@@ -212,8 +225,6 @@ interface IFOTVesting {
             uint256 totalAmount,
             uint256 claimedAmount,
             uint64 startDate,
-            uint64 unlockDate,
-            uint64 endDate,
             address beneficiary
         );
 
